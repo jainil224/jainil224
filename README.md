@@ -1,6 +1,6 @@
 <img width="2048" height="554" alt="banner" src="https://github.com/user-attachments/assets/bf8c55a8-0112-4ac5-ae7d-ee606f40fee5" />
 
----
+----
 ## 💫 𝐀𝐛𝐨𝐮𝐭 𝐌𝐞
 
 🎓 𝐀𝐛𝐨𝐮𝐭 𝐌𝐲 𝐄𝐝𝐮𝐜𝐚𝐭𝐢𝐨𝐧  
