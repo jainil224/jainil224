@@ -59,5 +59,7 @@ Python-based projects, web applications, and beginner-friendly open-source proje
 </p>
 
 ---
-
+<p align="center">
+  <img src="./assets/space-shooter.gif" alt="GitHub Space Shooter Game" />
+</p>
 <!-- Proudly created with GPRM -->
