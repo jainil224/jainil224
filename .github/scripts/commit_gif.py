@@ -11,7 +11,7 @@ import argparse, datetime as dt, json, math, os, random, subprocess, shutil, sys
 from PIL import Image, ImageDraw, ImageFont
 
 K = 1.6                           # resolution multiplier (sharper text)
-W, H, SS = int(1000 * K), int(440 * K), 2           # output size, supersample
+W, H, SS = int(1000 * K), int(480 * K), 2           # output size, supersample
 FPS = 20
 BG = (250, 250, 250)
 LEVELS = [(166, 239, 174), (82, 211, 110), (46, 176, 78), (28, 125, 58)]
@@ -95,6 +95,11 @@ def main():
     if a.dark:
         BG, FLOOR, LINE, TXT, SUB = (13,17,23), (33,38,45), (139,148,158), (240,246,252), (139,148,158)
     cells, ncols = grid(days)
+    _today = dt.date.today()
+    _ds = [(dt.date.fromisoformat(x["date"]), x["count"]) for x in days]
+    YEAR_N = sum(c for d_, c in _ds if d_.year == _today.year)
+    LAST12 = sum(c for d_, c in _ds)
+    ACTIVE = sum(1 for d_, c in _ds if d_.year == _today.year and c > 0)
     mx = max(x["count"] for x in cells.values()) or 1
     best = max(cells.items(), key=lambda kv: kv[1]["count"])
     (bc, br), bd = best
@@ -107,6 +112,8 @@ def main():
     X0, Y0 = 40.0 * K, 385.0 * K
     f_serif = ImageFont.truetype(SERIF, int(30 * K * SS))
     f_mono = ImageFont.truetype(MONO, int(11 * K * SS))
+    f_big = ImageFont.truetype(SERIF, int(26 * K * SS))
+    f_mid = ImageFont.truetype(MONO, int(12 * K * SS))
 
     def pos(c, r):
         d = 6 - r  # row 0 (Sun) is back, row 6 is front
@@ -154,6 +161,11 @@ def main():
                 dr.polygon([(px + w, py - h), (px + w + ox, py - h - oy), (px + w + ox, py - oy), (px + w, py)], fill=shade(col, 0.78))
                 dr.rectangle([px, py - h, px + w, py], fill=col)
                 dr.polygon([(px, py - h), (px + w, py - h), (px + w + ox, py - h - oy), (px + ox, py - h - oy)], fill=shade(col, 1.12))
+        # this-year stats text (bottom-left), number counts up while bars rise
+        cu = ease(t / T_RISE)
+        sx, sy = X0 * SS, (Y0 + 22 * K) * SS
+        dr.text((sx, sy), f"{int(YEAR_N * cu):,} commits in {_today.year}", font=f_big, fill=TXT)
+        dr.text((sx, sy + 38 * K * SS), f"LAST 12 MONTHS: {LAST12:,}   ACTIVE DAYS: {ACTIVE}", font=f_mid, fill=SUB)
         # callout
         tl = (t - T_RISE) / T_LINE
         if tl > 0:
