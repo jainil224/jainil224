@@ -27,19 +27,29 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y ffmpeg fonts-dejavu-core
 
-      - name: Generate GIFs from real contributions
+      - name: Generate GIFs and stats from real contributions
         env:
           # Optional: add a PAT named GH_PAT (scope read:user) to include private contributions
           GITHUB_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p assets
-          python .github/scripts/commit_gif.py --user "${{ github.repository_owner }}" --dark --out assets/commits-dark.gif
+          python .github/scripts/commit_gif.py --user "${{ github.repository_owner }}" --stats-md stats.md --dark --out assets/commits-dark.gif
           python .github/scripts/commit_gif.py --user "${{ github.repository_owner }}" --out assets/commits.gif
+
+      - name: Update stats block in README
+        run: |
+          python - <<'PY'
+          import re
+          r = open("README.md", encoding="utf-8").read()
+          s = open("stats.md", encoding="utf-8").read().strip()
+          r = re.sub(r"<!--STATS_START-->.*?<!--STATS_END-->", lambda m: s, r, flags=re.S)
+          open("README.md", "w", encoding="utf-8").write(r)
+          PY
 
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/commits.gif assets/commits-dark.gif
-          git diff --cached --quiet || git commit -m "Update 3D commit chart"
+          git add assets/commits.gif assets/commits-dark.gif README.md
+          git diff --cached --quiet || git commit -m "Update 3D commit chart and stats"
           git push
