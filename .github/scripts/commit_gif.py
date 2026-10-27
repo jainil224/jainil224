@@ -54,6 +54,26 @@ def grid(days):
     return cells, max(c for c, _ in cells) + 1
 
 
+def write_stats(days, path):
+    today = dt.date.today()
+    ds = sorted(((dt.date.fromisoformat(x["date"]), x["count"]) for x in days))
+    year = sum(c for d, c in ds if d.year == today.year)
+    last12 = sum(c for d, c in ds)
+    best_d, best_c = max(ds, key=lambda t: t[1])
+    active = sum(1 for d, c in ds if d.year == today.year and c > 0)
+    by = dict(ds); streak = 0
+    d = today if by.get(today, 0) > 0 else today - dt.timedelta(1)
+    while by.get(d, 0) > 0:
+        streak += 1; d -= dt.timedelta(1)
+    rows = [("Commits in %d" % today.year, f"{year:,}"), ("Last 12 months", f"{last12:,}"),
+            ("Active days (%d)" % today.year, str(active)),
+            ("Best day", f"{best_c} on {best_d.day} {best_d.strftime('%b %Y')}"),
+            ("Current streak", f"{streak} day{'s' if streak != 1 else ''}")]
+    w = max(len(k) for k, _ in rows)
+    body = "\n".join(f"{k.ljust(w)} : {v}" for k, v in rows)
+    open(path, "w", encoding="utf-8").write(f"<!--STATS_START-->\n```text\n{body}\n```\n<!--STATS_END-->\n")
+
+
 def ease(t):
     t = max(0.0, min(1.0, t))
     return 1 - (1 - t) ** 3
@@ -65,9 +85,11 @@ def shade(c, f):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--best-count", type=int); ap.add_argument("--best-date", help="YYYY-MM-DD"); ap.add_argument("--dark", action="store_true"); ap.add_argument("--user"); ap.add_argument("--json"); ap.add_argument("--out", default="commits.gif")
+    ap.add_argument("--best-count", type=int); ap.add_argument("--best-date", help="YYYY-MM-DD"); ap.add_argument("--dark", action="store_true"); ap.add_argument("--stats-md"); ap.add_argument("--user"); ap.add_argument("--json"); ap.add_argument("--out", default="commits.gif")
     a = ap.parse_args()
     days = fetch(a.user) if a.user else json.load(open(a.json)) if a.json else sample()
+    if a.stats_md:
+        write_stats(days, a.stats_md)
     global BG
     FLOOR, LINE, TXT, SUB = (236,236,236), (90,90,90), (25,25,25), (140,140,140)
     if a.dark:
