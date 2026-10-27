@@ -10,7 +10,8 @@ Requires: Pillow, ffmpeg (for the optimised palette GIF).
 import argparse, datetime as dt, json, math, os, random, subprocess, shutil, sys
 from PIL import Image, ImageDraw, ImageFont
 
-W, H, SS = 1000, 440, 2           # output size, supersample
+K = 1.6                           # resolution multiplier (sharper text)
+W, H, SS = int(1000 * K), int(440 * K), 2           # output size, supersample
 FPS = 20
 BG = (250, 250, 250)
 LEVELS = [(166, 239, 174), (82, 211, 110), (46, 176, 78), (28, 125, 58)]
@@ -79,14 +80,30 @@ def main():
     if a.best_count: bd['count'] = a.best_count
     if a.best_date: bd['date'] = a.best_date
 
-    COL, BW, OX, OY, HS = 17.0, 12.0, 4.0, 7.0, 2.1
-    X0, Y0 = 40.0, 385.0
-    f_serif = ImageFont.truetype(SERIF, 30 * SS)
-    f_mono = ImageFont.truetype(MONO, 10 * SS)
+    COL, BW, OX, OY = 17.0 * K, 12.0 * K, 4.0 * K, 7.0 * K
+    HS = 250.0 * K / mx                # auto-scale: tallest bar always fills the frame
+    X0, Y0 = 40.0 * K, 385.0 * K
+    f_serif = ImageFont.truetype(SERIF, int(30 * K * SS))
+    f_mono = ImageFont.truetype(MONO, int(11 * K * SS))
 
     def pos(c, r):
         d = 6 - r  # row 0 (Sun) is back, row 6 is front
         return (X0 + c * COL + d * OX) * SS, (Y0 - d * OY) * SS
+
+    # --- label placement: find clear space above every bar under the text ---
+    _tmp = ImageDraw.Draw(Image.new("RGB", (10, 10)))
+    d0 = dt.date.fromisoformat(bd["date"])
+    lab0 = f'{d0.day} {d0.strftime("%b").upper()} {d0.year}, BEST DAY'
+    tw = max(_tmp.textlength(f'{bd["count"]} commits', font=f_serif), _tmp.textlength(lab0, font=f_mono)) / SS + 14 * K
+    bpx, bpy = pos(bc, br)
+    LX = bpx / SS + BW / 2 + OX / 2
+    best_top = bpy / SS - (max(best[1]["count"], 1) * HS + 3 * K) - OY * 0.8
+    span_top = best_top
+    for (c_, r_), x_ in cells.items():
+        px_, py_ = pos(c_, r_); px_ /= SS; py_ /= SS
+        if px_ + BW + OX >= LX - 4 * K and px_ <= LX + tw:
+            span_top = min(span_top, py_ - (max(x_["count"], 1) * HS + 3 * K) - OY * 0.8)
+    YTOP = max(span_top - 44 * K - 12 * K, 12 * K)
 
     T_RISE, T_LINE, T_TEXT, T_HOLD = 4.0, 1.4, 1.0, 4.0
     total = T_RISE + T_LINE + T_TEXT + T_HOLD
@@ -109,7 +126,7 @@ def main():
                 lvl = 0 if n_ == 0 else min(3, int(math.ceil(n_ / mx * 4)) - 1)
                 col = LEVELS[lvl]
                 grow = ease((t - (c / ncols) * 2.4) / 1.6)
-                h = (max(n_, 1) * HS + 3) * SS * grow
+                h = (max(n_, 1) * HS + 3 * K) * SS * grow
                 if h < 1: continue
                 px, py = pos(c, r); w = BW * SS; ox, oy = OX * SS, OY * SS * 0.8
                 dr.polygon([(px + w, py - h), (px + w + ox, py - h - oy), (px + w + ox, py - oy), (px + w, py)], fill=shade(col, 0.78))
@@ -119,22 +136,22 @@ def main():
         tl = (t - T_RISE) / T_LINE
         if tl > 0:
             px, py = pos(bc, br)
-            top = py - (max(best[1]["count"], 1) * HS + 3) * SS - OY * SS * 0.8
+            top = py - (max(best[1]["count"], 1) * HS + 3 * K) * SS - OY * SS * 0.8
             lx = px + BW * SS / 2 + OX * SS / 2
-            ytop = top - 52 * SS * ease(tl)
-            dr.line([(lx, top), (lx, ytop)], fill=LINE, width=SS)
+            ytop = top - (top - YTOP * SS) * ease(tl)
+            dr.line([(lx, top), (lx, ytop)], fill=LINE, width=int(1.5 * K * SS))
             ta = ease((t - T_RISE - T_LINE) / T_TEXT)
             if ta > 0:
                 mix = lambda c: tuple(int(BG[i] + (c[i] - BG[i]) * ta) for i in range(3))
                 d = dt.date.fromisoformat(bd["date"])
                 lab = f'{d.day} {d.strftime("%b").upper()} {d.year}, BEST DAY'
-                dr.text((lx + 4 * SS, ytop - 6 * SS), f'{bd["count"]} commits', font=f_serif, fill=mix(TXT))
-                dr.text((lx + 4 * SS, ytop + 30 * SS), lab, font=f_mono, fill=mix(SUB))
+                dr.text((lx + 6 * K * SS, ytop - 8 * K * SS), f'{bd["count"]} commits', font=f_serif, fill=mix(TXT))
+                dr.text((lx + 6 * K * SS, ytop + 30 * K * SS), lab, font=f_mono, fill=mix(SUB))
         im.resize((W, H), Image.LANCZOS).save(f"{tmp}/{fi:03d}.png")
 
     # optimised GIF; last-frame hold + loop
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-framerate", str(FPS), "-i", f"{tmp}/%03d.png",
-                    "-vf", "split[a][b];[a]palettegen=max_colors=64:stats_mode=full[p];[b][p]paletteuse=dither=none",
+                    "-vf", "split[a][b];[a]palettegen=max_colors=128:stats_mode=full[p];[b][p]paletteuse=dither=none",
                     "-loop", "0", a.out], check=True)
     shutil.rmtree(tmp)
     print(a.out, os.path.getsize(a.out) // 1024, "KB", n, "frames")
