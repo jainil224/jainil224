@@ -1,24 +1,55 @@
+<div align="center">
+
+<h1>Jainil Patel</h1>
+
+<a href="https://git.io/typing-svg">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&pause=1200&color=58A6FF&center=true&vCenter=true&width=700&lines=4th-Year+B.Tech+CSE+Student;Full-Stack+Developer+%C2%B7+React+%C2%B7+TypeScript+%C2%B7+Node.js;Building+UI+HUB+and+CodeBazaar;Learning+DSA+with+Python+and+IoT;Open+to+collaborate+%F0%9F%A4%9D" alt="Typing intro"/>
+</a>
+
+</div>
+
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/74038190/225813708-98b745f2-7d22-48cf-9150-083f1b00d6c9.gif" width="700" alt="Coding Animation">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./assets/commits-dark.gif">
+    <source media="(prefers-color-scheme: light)" srcset="./assets/commits.gif">
+    <img src="./assets/commits-dark.gif" width="100%" alt="3D commit activity chart showing my best day">
+  </picture>
 </p>
-
-## 💫 𝐀𝐛𝐨𝐮𝐭 𝐌𝐞
-
-🎓 𝐀𝐛𝐨𝐮𝐭 𝐌𝐲 𝐄𝐝𝐮𝐜𝐚𝐭𝐢𝐨𝐧  
-I’m a **3rd-year B.Tech. Computer Science & Engineering student**, passionate about building real-world applications and strengthening my problem-solving skills.
-
-🔭 𝐈’𝐦 𝐜𝐮𝐫𝐫𝐞𝐧𝐭𝐥𝐲 𝐰𝐨𝐫𝐤𝐢𝐧𝐠 𝐨𝐧  
-**Resume Analyzer Website** – a smart tool to analyze resumes, extract key skills, and provide insights using modern web technologies.
-
-🌱 𝐈’𝐦 𝐜𝐮𝐫𝐫𝐞𝐧𝐭𝐥𝐲 𝐥𝐞𝐚𝐫𝐧𝐢𝐧𝐠  
-**Data Structures & Algorithms (DSA) using Python**, focusing on problem-solving and interview preparation.
-
-🤝 𝐈’𝐦 𝐥𝐨𝐨𝐤𝐢𝐧𝐠 𝐭𝐨 𝐜𝐨𝐥𝐥𝐚𝐛𝐨𝐫𝐚𝐭𝐞 𝐨𝐧  
-Python-based projects, web applications, and beginner-friendly open-source projects.
 
 ---
 
-## 🌐 𝐒𝐨𝐜𝐢𝐚𝐥𝐬
+## 💫 About Me
+
+<table>
+  <tr>
+    <td width="30%">🎓 <b>Education</b></td>
+    <td>4th-year B.Tech. Computer Science & Engineering student</td>
+  </tr>
+  <tr>
+    <td>🔭 <b>Working on</b></td>
+    <td><b>UI HUB</b>: a prompt platform for vibe coders to build UI components with AI tools<br/><b>CodeBazaar</b>: a marketplace to buy source code and download it as ZIP files</td>
+  </tr>
+  <tr>
+    <td>🌱 <b>Learning</b></td>
+    <td><b>Data Structures & Algorithms with Python</b> and the <b>NPTEL Internet of Things (IoT)</b> course</td>
+  </tr>
+  <tr>
+    <td>⚙️ <b>What I build</b></td>
+    <td>Full-stack web apps with React, TypeScript, Node.js/Express and Firebase, plus ML model deployment</td>
+  </tr>
+  <tr>
+    <td>🤝 <b>Open to collaborate on</b></td>
+    <td>Web apps, Python projects and beginner-friendly open source</td>
+  </tr>
+  <tr>
+    <td>📫 <b>Reach me</b></td>
+    <td><a href="mailto:jainil11199@gmail.com">jainil11199@gmail.com</a></td>
+  </tr>
+</table>
+
+---
+
+## 🌐 Socials
 
 <p align="left">
   <a href="https://jainilpatel.vercel.app" target="_blank">
@@ -37,14 +68,47 @@ Python-based projects, web applications, and beginner-friendly open-source proje
 
 ---
 
-## 💻 𝐓𝐞𝐜𝐡 𝐒𝐭𝐚𝐜𝐤
+## 🚀 Projects
+
+<table>
+  <tr>
+    <td width="33%" valign="top">
+      <h3>🧩 UI HUB</h3>
+      A platform for vibe coders: copy ready-made prompts, paste them into your AI tool, and build UI components in seconds.<br/><br/>
+      <a href="https://www.uihub.codes/">
+        <img src="https://img.shields.io/badge/Visit-UI%20HUB-1f6feb?style=for-the-badge" alt="UI HUB"/>
+      </a>
+    </td>
+    <td width="33%" valign="top">
+      <h3>🎨 Chromatic</h3>
+      A colour-focused web tool built with TypeScript.<br/><br/>
+      <a href="https://github.com/jainil224/Chromatic">
+        <img src="https://img.shields.io/badge/View-Chromatic-1f6feb?style=for-the-badge" alt="Chromatic"/>
+      </a>
+    </td>
+    <td width="33%" valign="top">
+      <h3>🌍 Portfolio</h3>
+      My personal website showcasing my work and skills.<br/><br/>
+      <a href="https://jainilpatel.vercel.app">
+        <img src="https://img.shields.io/badge/Visit-Portfolio-1f6feb?style=for-the-badge" alt="Portfolio"/>
+      </a>
+    </td>
+  </tr>
+</table>
+
+---
+
+## 💻 Tech Stack
 
 <p align="left">
   <img src="https://img.shields.io/badge/Python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54" alt="Python"/>
   <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java"/>
   <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript"/>
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript"/>
   <img src="https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=cplusplus&logoColor=white" alt="C++"/>
   <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React"/>
+  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js"/>
+  <img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express"/>
   <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL"/>
   <img src="https://img.shields.io/badge/Firebase-a08021?style=for-the-badge&logo=firebase&logoColor=ffcd34" alt="Firebase"/>
   <img src="https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase"/>
@@ -54,7 +118,7 @@ Python-based projects, web applications, and beginner-friendly open-source proje
 
 ---
 
-### 🧠 𝗖𝗼𝗱𝗶𝗻𝗴 𝗣𝗿𝗼𝗳𝗶𝗹𝗲𝘀
+## 🧠 Coding Profiles
 
 <p align="left">
   <a href="https://leetcode.com/u/Jainill_2208/" target="_blank">
@@ -67,5 +131,3 @@ Python-based projects, web applications, and beginner-friendly open-source proje
 <p align="center">
   <img src="./assets/space-shooter.gif" alt="GitHub Space Shooter Game" />
 </p>
-
-<!-- Proudly created with GPRM -->
