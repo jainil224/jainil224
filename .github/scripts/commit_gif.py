@@ -100,6 +100,15 @@ def main():
     YEAR_N = sum(c for d_, c in _ds if d_.year == _today.year)
     LAST12 = sum(c for d_, c in _ds)
     ACTIVE = sum(1 for d_, c in _ds if d_.year == _today.year and c > 0)
+    _by = dict(_ds)
+    CUR = 0
+    _d = _today if _by.get(_today, 0) > 0 else _today - dt.timedelta(1)
+    while _by.get(_d, 0) > 0:
+        CUR += 1; _d -= dt.timedelta(1)
+    LONG = run = 0
+    for d_, c in sorted(_ds):
+        run = run + 1 if c > 0 else 0
+        LONG = max(LONG, run)
     mx = max(x["count"] for x in cells.values()) or 1
     best = max(cells.items(), key=lambda kv: kv[1]["count"])
     (bc, br), bd = best
@@ -165,7 +174,7 @@ def main():
         cu = ease(t / T_RISE)
         sx, sy = X0 * SS, (Y0 + 22 * K) * SS
         dr.text((sx, sy), f"{int(YEAR_N * cu):,} commits in {_today.year}", font=f_big, fill=TXT)
-        dr.text((sx, sy + 38 * K * SS), f"LAST 12 MONTHS: {LAST12:,}   ACTIVE DAYS: {ACTIVE}", font=f_mid, fill=SUB)
+        dr.text((sx, sy + 38 * K * SS), f"LAST 12 MONTHS: {LAST12:,}   ACTIVE DAYS: {ACTIVE}   CURRENT STREAK: {CUR} DAY{'S' if CUR != 1 else ''}   LONGEST STREAK: {LONG} DAYS", font=f_mid, fill=SUB)
         # callout
         tl = (t - T_RISE) / T_LINE
         if tl > 0:
