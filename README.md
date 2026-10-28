@@ -10,9 +10,9 @@
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./assets/commits-dark.gif">
-    <source media="(prefers-color-scheme: light)" srcset="./assets/commits.gif">
-    <img src="./assets/commits-dark.gif" width="100%" alt="3D commit activity chart showing my best day">
+    <source media="(prefers-color-scheme: dark)" srcset="./assets/commits-dark.gif?v=ab534a822a40">
+    <source media="(prefers-color-scheme: light)" srcset="./assets/commits.gif?v=54118e5bc35a">
+    <img src="./assets/commits-dark.gif?v=ab534a822a40" width="100%" alt="3D commit activity chart showing my best day">
   </picture>
 </p>
 
