@@ -1,12 +1,23 @@
+
 name: Update 3D commit chart
 
 on:
+  # Refresh once every hour
   schedule:
-    - cron: "0 */6 * * *"      # every 6 hours
-  workflow_dispatch:           # "Run workflow" button
+    - cron: "17 * * * *"
+
+  # Allow manual updates from GitHub Actions
+  workflow_dispatch:
+
+  # Update when you push normal changes to main
   push:
-    paths:
-      - ".github/scripts/commit_gif.py"
+    branches:
+      - main
+    paths-ignore:
+      - "assets/commits.gif"
+      - "assets/commits-dark.gif"
+      - "README.md"
+      - "stats.md"
 
 permissions:
   contents: write
@@ -14,10 +25,13 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
@@ -27,29 +41,52 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y ffmpeg fonts-dejavu-core
 
-      - name: Generate GIFs and stats from real contributions
+      - name: Generate GIFs and statistics
         env:
-          # Optional: add a PAT named GH_PAT (scope read:user) to include private contributions
           GITHUB_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p assets
-          python .github/scripts/commit_gif.py --user "${{ github.repository_owner }}" --stats-md stats.md --dark --out assets/commits-dark.gif
-          python .github/scripts/commit_gif.py --user "${{ github.repository_owner }}" --out assets/commits.gif
+          python .github/scripts/commit_gif.py \
+            --user "${{ github.repository_owner }}" \
+            --stats-md stats.md \
+            --dark \
+            --out assets/commits-dark.gif
 
-      - name: Update stats block in README
+          python .github/scripts/commit_gif.py \
+            --user "${{ github.repository_owner }}" \
+            --out assets/commits.gif
+
+      - name: Update README statistics
         run: |
           python - <<'PY'
           import re
-          r = open("README.md", encoding="utf-8").read()
-          s = open("stats.md", encoding="utf-8").read().strip()
-          r = re.sub(r"<!--STATS_START-->.*?<!--STATS_END-->", lambda m: s, r, flags=re.S)
-          open("README.md", "w", encoding="utf-8").write(r)
+
+          with open("README.md", encoding="utf-8") as f:
+              readme = f.read()
+
+          with open("stats.md", encoding="utf-8") as f:
+              stats = f.read().strip()
+
+          updated = re.sub(
+              r"<!--STATS_START-->.*?<!--STATS_END-->",
+              lambda _: stats,
+              readme,
+              flags=re.S
+          )
+
+          with open("README.md", "w", encoding="utf-8") as f:
+              f.write(updated)
           PY
 
-      - name: Commit changes
+      - name: Commit and push updated chart
         run: |
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
           git add assets/commits.gif assets/commits-dark.gif README.md
-          git diff --cached --quiet || git commit -m "Update 3D commit chart and stats"
-          git push
+
+          if ! git diff --cached --quiet; then
+            git commit -m "Update 3D commit chart and stats"
+            git push
+          fi
