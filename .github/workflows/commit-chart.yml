@@ -1,29 +1,32 @@
 
-name: Update 3D commit chart
+name: Update 3D GitHub activity chart
 
 on:
-  # Refresh once every hour
   schedule:
-    - cron: "17 * * * *"
+    - cron: "*/5 * * * *"
 
-  # Allow manual updates from GitHub Actions
   workflow_dispatch:
 
-  # Update when you push normal changes to main
   push:
     branches:
       - main
-    paths-ignore:
-      - "assets/commits.gif"
-      - "assets/commits-dark.gif"
-      - "README.md"
-      - "stats.md"
+    paths:
+      - ".github/scripts/commit_gif.py"
+      - ".github/workflows/commit-chart.yml"
+
+  issue_comment:
+    types: [created, edited, deleted]
 
 permissions:
   contents: write
 
+concurrency:
+  group: github-activity-chart
+  cancel-in-progress: true
+
 jobs:
   build:
+    if: github.event_name != 'issue_comment' || github.event.comment.user.login == github.repository_owner
     runs-on: ubuntu-latest
 
     steps:
@@ -59,34 +62,48 @@ jobs:
       - name: Update README statistics
         run: |
           python - <<'PY'
+          from pathlib import Path
           import re
+          import hashlib
 
-          with open("README.md", encoding="utf-8") as f:
-              readme = f.read()
+          readme_path = Path("README.md")
+          readme = readme_path.read_text(encoding="utf-8")
+          stats_path = Path("stats.md")
 
-          with open("stats.md", encoding="utf-8") as f:
-              stats = f.read().strip()
+          if stats_path.exists():
+              stats = stats_path.read_text(encoding="utf-8").strip()
+              readme = re.sub(
+                  r"<!--STATS_START-->.*?<!--STATS_END-->",
+                  lambda _: stats,
+                  readme,
+                  flags=re.S,
+              )
 
-          updated = re.sub(
-              r"<!--STATS_START-->.*?<!--STATS_END-->",
-              lambda _: stats,
-              readme,
-              flags=re.S
-          )
+          for filename in ("commits.gif", "commits-dark.gif"):
+              digest = hashlib.sha256(
+                  Path("assets", filename).read_bytes()
+              ).hexdigest()[:12]
 
-          with open("README.md", "w", encoding="utf-8") as f:
-              f.write(updated)
+              pattern = re.compile(
+                  r"(\./assets/" + re.escape(filename)
+                  + r")(?:\?v=[^\"\s)>]*)?"
+              )
+              readme = pattern.sub(
+                  lambda match: f"{match.group(1)}?v={digest}",
+                  readme,
+              )
+
+          readme_path.write_text(readme, encoding="utf-8")
           PY
 
-      - name: Commit and push updated chart
+      - name: Commit updated charts
         run: |
           git config user.name "github-actions[bot]"
-          git config user.email \
-            "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add assets/commits.gif assets/commits-dark.gif README.md
 
           if ! git diff --cached --quiet; then
-            git commit -m "Update 3D commit chart and stats"
+            git commit -m "Update GitHub activity chart"
             git push
           fi
