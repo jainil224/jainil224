@@ -16,10 +16,15 @@
   </picture>
 </p>
 
----
+<!-- GitHub profile view counter: counts badge loads, not unique people -->
+<p align="center">
+  <img
+    src="https://komarev.com/ghpvc/?username=jainil224&label=PROFILE%20VIEWS&color=0e75b6&style=for-the-badge"
+    alt="GitHub profile views"
+  />
+</p>
 
-## 💫 About Me
-
+💫 About Me
 <table>
   <tr>
     <td width="30%">🎓 <b>Education</b></td>
@@ -47,10 +52,7 @@
   </tr>
 </table>
 
----
-
-## 🌐 Socials
-
+🌐 Socials
 <p align="left">
   <a href="https://jainilpatel.vercel.app" target="_blank">
     <img src="https://img.shields.io/badge/Portfolio-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Portfolio"/>
@@ -66,10 +68,7 @@
   </a>
 </p>
 
----
-
-## 🚀 Projects
-
+🚀 Projects
 <table>
   <tr>
     <td width="33%" valign="top">
@@ -96,10 +95,7 @@
   </tr>
 </table>
 
----
-
-## 💻 Tech Stack
-
+💻 Tech Stack
 <p align="left">
   <img src="https://img.shields.io/badge/Python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54" alt="Python"/>
   <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java"/>
@@ -116,17 +112,12 @@
   <img src="https://img.shields.io/badge/Excel-217346?style=for-the-badge&logo=microsoft-excel&logoColor=white" alt="Excel"/>
 </p>
 
----
-
-## 🧠 Coding Profiles
-
+🧠 Coding Profiles
 <p align="left">
   <a href="https://leetcode.com/u/Jainill_2208/" target="_blank">
     <img src="https://img.shields.io/badge/LeetCode-FFA116?style=for-the-badge&logo=leetcode&logoColor=black" alt="LeetCode"/>
   </a>
 </p>
-
----
 
 <p align="center">
   <img src="./assets/space-shooter.gif" alt="GitHub Space Shooter Game" />
