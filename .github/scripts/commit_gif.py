@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-"""3D isometric GitHub activity GIF.
-
-Uses GitHub's contribution calendar plus issue/PR conversation comments written
-by the selected user. The chart is therefore an activity chart (contributions +
-comments), not an exact copy of GitHub's official contributions calendar.
+"""3D isometric GitHub commit-bars GIF (matches your GitHub contribution calendar).
 
 Usage:
   python3 commit_gif.py                         # placeholder sample data
@@ -93,69 +89,8 @@ def fetch(user):
     if not days:
         raise RuntimeError("GitHub returned an empty contribution calendar.")
 
-    # Start with native contribution-calendar counts.
-    counts = {day["date"]: day["count"] for day in days}
-    first_date = min(counts)
-
-    # Add issue comments and pull-request conversation comments authored by this user.
-    # GitHub exposes these through the user's issueComments connection. This is
-    # separate from the official contribution calendar because normal comments
-    # do not themselves count as official profile contributions.
-    comments_query = """
-    query ($login: String!, $after: String) {
-      user(login: $login) {
-        issueComments(
-          first: 100,
-          after: $after,
-          orderBy: { field: UPDATED_AT, direction: DESC }
-        ) {
-          nodes {
-            createdAt
-            updatedAt
-          }
-          pageInfo {
-            hasNextPage
-            endCursor
-          }
-        }
-      }
-    }
-    """
-
-    cursor = None
-    while True:
-        comments_data = graphql(comments_query, {"login": user, "after": cursor}, token)
-        user_data = comments_data.get("user")
-        if not user_data:
-            raise RuntimeError(f"GitHub user '{user}' was not found while retrieving comments.")
-
-        connection = user_data["issueComments"]
-        found_older_comment = False
-
-        for comment in connection["nodes"]:
-            comment_date = comment["createdAt"][:10]
-            updated_date = comment["updatedAt"][:10]
-
-            # The API can order issue comments by UPDATED_AT, not CREATED_AT.
-            # Once updated dates are older than our graph window, older pages
-            # cannot contain a newly-created comment inside the displayed window.
-            if updated_date < first_date:
-                found_older_comment = True
-                continue
-
-            # Count comments by creation date, not the date they were edited.
-            if comment_date in counts:
-                counts[comment_date] += 1
-
-        page_info = connection["pageInfo"]
-        if found_older_comment or not page_info["hasNextPage"]:
-            break
-
-        cursor = page_info["endCursor"]
-        if not cursor:
-            break
-
-    return [{"date": date, "count": counts[date]} for date in sorted(counts)]
+    # Contribution calendar only, so the numbers match your GitHub profile.
+    return sorted(days, key=lambda day: day["date"])
 
 
 def sample():
@@ -199,8 +134,8 @@ def write_stats(days, path):
         date -= dt.timedelta(days=1)
 
     rows = [
-        (f"Activities in {today.year}", f"{year_total:,}"),
-        ("Activity last 12 months", f"{last12:,}"),
+        (f"Commits in {today.year}", f"{year_total:,}"),
+        ("Last 12 months", f"{last12:,}"),
         (f"Active days ({today.year})", str(active_days)),
         ("Best day", f"{best_count} on {best_date.day} {best_date.strftime('%b %Y')}"),
         ("Current streak", f"{streak} day{'s' if streak != 1 else ''}"),
@@ -291,7 +226,7 @@ def main():
     best_date_obj = dt.date.fromisoformat(best_item["date"])
     callout_label = f'{best_date_obj.day} {best_date_obj.strftime("%b").upper()} {best_date_obj.year}, BEST DAY'
     text_width = max(
-        temp_draw.textlength(f'{best_item["count"]} activities', font=font_serif),
+        temp_draw.textlength(f'{best_item["count"]} commits', font=font_serif),
         temp_draw.textlength(callout_label, font=font_mono),
     ) / SS + 14 * K
     best_x, best_y = pos(best_col, best_row)
@@ -357,7 +292,7 @@ def main():
         # Activity count animates while the bars rise.
         count_up = ease(time / T_RISE)
         stat_x, stat_y = X0 * SS, (Y0 + 22 * K) * SS
-        draw.text((stat_x, stat_y), f"{int(year_total * count_up):,} activities in {today.year}", font=font_big, fill=TXT)
+        draw.text((stat_x, stat_y), f"{int(year_total * count_up):,} commits in {today.year}", font=font_big, fill=TXT)
         draw.text(
             (stat_x, stat_y + 38 * K * SS),
             f"LAST 12 MONTHS: {last12:,}   ACTIVE DAYS: {active_days}   CURRENT STREAK: {current_streak} DAY{'S' if current_streak != 1 else ''}   LONGEST STREAK: {longest_streak} DAYS",
@@ -378,7 +313,7 @@ def main():
                 mixed_color = lambda color: tuple(int(BG[i] + (color[i] - BG[i]) * text_alpha) for i in range(3))
                 label_date = dt.date.fromisoformat(best_item["date"])
                 label = f'{label_date.day} {label_date.strftime("%b").upper()} {label_date.year}, BEST DAY'
-                draw.text((line_x + 6 * K * SS, label_y - 8 * K * SS), f'{best_item["count"]} activities', font=font_serif, fill=mixed_color(TXT))
+                draw.text((line_x + 6 * K * SS, label_y - 8 * K * SS), f'{best_item["count"]} commits', font=font_serif, fill=mixed_color(TXT))
                 draw.text((line_x + 6 * K * SS, label_y + 30 * K * SS), label, font=font_mono, fill=mixed_color(SUB))
 
         image.resize((W, H), Image.Resampling.LANCZOS).save(f"{temp_dir}/{frame_index:03d}.png")
